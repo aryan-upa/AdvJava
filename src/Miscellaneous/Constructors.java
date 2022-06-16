@@ -1,6 +1,6 @@
-package Miscelleneous;
+package Miscellaneous;
 
-import java.util.Scanner;
+import java.util.Arrays;
 
 public class Constructors {
     /*
@@ -111,8 +111,8 @@ public class Constructors {
 
         Copy Constructor:
             The copy constructor is used to create an exact replica of an object. Often times when an object is sent to
-            a different method in different class or package for some operation, then to prevent the object. Rather than
-             the real object, its copy is sent to the work.
+            a different method in different class or package for some operation, then to safeguard the object and its
+            data. Rather than the real object, its copy is sent to the work.
             It copies all the data in fields from one object to another. It is sort of same as a Parameterized
                 constructor but here the parameter is the same class' object.
 
@@ -141,9 +141,13 @@ public class Constructors {
 
 
                                     Java does not support call by reference.
+        This is to be understood that Java does not support call by reference, anything in Java is called using the
+        reference ID. The reference ID is what shared when we send an object or array to a method. In call by reference
+        the address of the object is sent, but in Java the variable holding the reference is sent. Thus, the data in
+        that variable is reference and that reference data is shared. Therefore, Java is always call by Value and never
+        call by reference.
 
-
-        Constructors can be chained, this phenomenon is called constructor chaining. It is the [process of calling one
+        Constructors can be chained, this phenomenon is called constructor chaining. It is the process of calling one
             constructor from another constructor with respect to the current object.
 
             There are two ways of chaining a constructor
@@ -188,10 +192,121 @@ public class Constructors {
                     out of constructor 2.
                     out of constructor 1.
 
+        Instance Block / Init Block
+            It is the only block in the entire Java which does not have a name when created. It can be created by just a
+             pair of braces.
+
+            class Temp {
+                {
+                    // instance block
+                }
+
+                Temp() {
+                    // Constructor
+                }
+             }
+
+             The code inside the instance block is executed before the execution of the constructor. When the
+             Constructor is called for object initialization, first the code inside the instance block is executed then
+             the code inside the constructor is executed.
+
+             But, this arises the question that, does this mean after 'new' -> 'Constructor' is NOT the first method
+                called?
+             Actually, it's not true. The internal functioning of the JVM does not put anything in b/w the new and
+             the constructor. It actually moves the code inside the Instance block to the first lines in the
+             Constructor.
+
+             So this:                                       is effectively this:
+                Temp {                                   |       Temp {
+                    int x;                               |           int x;
+                    {                                    |
+                        x = 5;                           |           Temp() {
+                    }                                    |               x = 5;
+                                                         |               System.out.println(x);
+                    Temp () {                            |           }
+                        System.out.println(x);           |       }
+                    }                                    |
+                }                                        |
+
+            But this raises the question that why do we need an instance block then after-all?
+                The need of instance block could be understood only when there is Constructor chaining inside and
+                there are several constructor chains.
+
+                When there is constructor chaining and constructors are chained using 'this' method. The instance block
+                code moves in the only constructor that does not have a 'this' in it. Understandably the last
+                constructor in the calling chain & the first constructor in execution chain.
+
+                When there are multiple chains or even multiple Constructors inside the Class then instance block is a
+                method to reduce redundancy of code as the code written in the instance block is by-default present in
+                all non-chained constructors.
+
+            There can be multiple instance blocks in the same class. The order of code insertion in the constructors is
+            as same as the order of writing the instance blocks.
+
+            This:                                                is as same as this:
+                Temp {                                         |     Temp {
+                    int x;                                     |         int x;
+                    {                                          |
+                        x = 5; }                               |         Temp() {
+                                                               |             x = 5;
+                    Temp () {                                  |             x = 10;
+                        System.out.println(x); }               |             System.out.println(x);
+                                                               |         }
+                   {                                           |
+                        x = 10; }                              |         public static void main (String...args) {
+                                                               |             new Temp();
+                    public static void main (String...args) {  |         }
+                        new Temp();                            |     }
+                    }                                          |
+                }                                              |
+
+        Static Block
+            These are the blocks which are executed while are classes are being loaded in the memory by the JVM Class
+            Loader. These are not associated with object and the purpose of using these classes is to perform some
+            checks on the program which are essential to its function. Such as:
+                To check whether the device is connected to internet or not?
+                To check whether the database exists or not?
+            Basically to perform functions which are needed to be executed only once during the lifecycle of the
+                program and that too during the initial phase before creating any object.
+
+            It is to be understood that static block executes when the class is loaded by the compiler not when its
+            object is created...
+
+            For example:
+                class temp1{
+                    static {
+                        System.out.println("static of temp executed");
+                    }
+
+                    temp1() {
+                        System.out.println("Constructor of temp1 executed");
+                    }
+                }
+
+                class temp2 {
+                    public static void main(String[] args) throws ClassNotFoundException {
+                        System.out.println("Only Loading the class : ");
+                        var temp1 = Class.forName("Miscellaneous.temp1");
+
+                        System.out.println("\nCreating an object of class : ");
+                        temp1 obj = new temp1();
+                    }
+                }
+
+            Output:
+                Only Loading the class :
+                static of temp executed
+
+                Creating an object of class :
+                Constructor of temp1 executed
+
+            But, if the class is not already loaded then both static and constructor block will execute one after
+            another.
+
+
      */
 
 }
-
 
 
 
